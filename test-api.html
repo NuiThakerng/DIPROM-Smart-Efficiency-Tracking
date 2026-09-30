@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Production Efficiency Tracker - API Test</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    button {
+      width: 100%;
+      padding: 11px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 12px;
+      cursor: pointer;
+      background: #1976d2;
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      background: #125ca3;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+
+    pre {
+      background: #111;
+      color: #00ff88;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+  <h1>Production Efficiency Tracker</h1>
+
+  <div class="subtitle">
+    API Test Page
+  </div>
+
+
+  <!-- API CONNECTION -->
+
+  <div class="card">
+
+    <h2>1. API Connection</h2>
+
+    <button onclick="testAPI()">
+      ตรวจสอบ API
+    </button>
+
+  </div>
+
+
+  <!-- PRODUCTS -->
+
+  <div class="card">
+
+    <h2>2. Products API</h2>
+
+    <button onclick="loadProducts()">
+      โหลดสินค้า
+    </button>
+
+  </div>
+
+
+  <!-- START PRODUCTION -->
+
+  <div class="card">
+
+    <h2>3. Start Production</h2>
+
+    <label>
+      Lot
+    </label>
+
+    <input
+      id="startLot"
+      placeholder="เช่น LOT001"
+    >
+
+
+    <label>
+      Product
+    </label>
+
+    <select id="startProduct">
+
+      <option value="">
+        -- เลือกสินค้า --
+      </option>
+
+    </select>
+
+
+    <label>
+      จำนวนคน
+    </label>
+
+    <input
+      id="startWorker"
+      type="number"
+      min="1"
+      placeholder="เช่น 5"
+    >
+
+
+    <label>
+      ผู้บันทึก
+    </label>
+
+    <input
+      id="startRecordedBy"
+      placeholder="ชื่อผู้บันทึก"
+    >
+
+
+    <label>
+      หน่วย
+    </label>
+
+    <select id="startUnit">
+
+      <option value="">
+        -- เลือกหน่วย --
+      </option>
+
+      <option value="ชิ้น/แพ็ค">
+        ชิ้น/แพ็ค
+      </option>
+
+      <option value="กิโลกรัม">
+        กิโลกรัม
+      </option>
+
+    </select>
+
+
+    <button onclick="startProduction()">
+      เริ่มผลิต
+    </button>
+
+  </div>
+
+
+  <!-- FINISH PRODUCTION -->
+
+  <div class="card">
+
+    <h2>4. Finish Production</h2>
+
+    <label>
+      Lot
+    </label>
+
+    <input
+      id="finishLot"
+      placeholder="เช่น LOT001"
+    >
+
+
+    <label>
+      จำนวนผลิต
+    </label>
+
+    <input
+      id="finishOutput"
+      type="number"
+      min="1"
+      placeholder="เช่น 450"
+    >
+
+
+    <label>
+      ผู้บันทึก
+    </label>
+
+    <input
+      id="finishRecordedBy"
+      placeholder="ชื่อผู้บันทึก"
+    >
+
+
+    <button onclick="finishProduction()">
+      เสร็จสิ้นการผลิต
+    </button>
+
+  </div>
+
+
+  <!-- DASHBOARD -->
+
+  <div class="card">
+
+    <h2>5. Dashboard API</h2>
+
+    <label>
+      วันที่เริ่มต้น
+    </label>
+
+    <input
+      id="dashboardStart"
+      type="date"
+    >
+
+
+    <label>
+      วันที่สิ้นสุด
+    </label>
+
+    <input
+      id="dashboardEnd"
+      type="date"
+    >
+
+
+    <label>
+      สินค้า
+    </label>
+
+    <select id="dashboardProduct">
+
+      <option value="all">
+        ทั้งหมด
+      </option>
+
+    </select>
+
+
+    <label>
+      หน่วย
+    </label>
+
+    <select id="dashboardUnit">
+
+      <option value="all">
+        ทั้งหมด
+      </option>
+
+      <option value="ชิ้น/แพ็ค">
+        ชิ้น/แพ็ค
+      </option>
+
+      <option value="กิโลกรัม">
+        กิโลกรัม
+      </option>
+
+    </select>
+
+
+    <label>
+      รูปแบบกราฟ
+    </label>
+
+    <select id="groupBy">
+
+      <option value="day">
+        รายวัน
+      </option>
+
+      <option value="week">
+        รายสัปดาห์
+      </option>
+
+      <option value="month">
+        รายเดือน
+      </option>
+
+      <option value="year">
+        รายปี
+      </option>
+
+    </select>
+
+
+    <button onclick="loadDashboard()">
+      โหลด Dashboard
+    </button>
+
+  </div>
+
+
+  <!-- RESULT -->
+
+  <div class="card">
+
+    <h2>API Result</h2>
+
+    <pre id="result">
+ยังไม่มีข้อมูล
+    </pre>
+
+  </div>
+
+</div>
+
+
+<script>
+
+
+/*************************************************
+ * CONFIG
+ *************************************************/
+
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbwvEqUvp_xEz6cPgzKK622ZwAC5aGEbMGwqO1KKvQv3IGnxY_gvxrWNYit6TPoK6Nb0/exec";
+
+
+/*************************************************
+ * SHOW RESULT
+ *************************************************/
+
+function showResult(data) {
+
+  document.getElementById("result")
+    .textContent =
+    JSON.stringify(
+      data,
+      null,
+      2
+    );
+
+}
+
+
+/*************************************************
+ * TEST API
+ *************************************************/
+
+async function testAPI() {
+
+  try {
+
+    const response =
+      await fetch(
+        API_URL
+      );
+
+
+    const data =
+      await response.json();
+
+
+    showResult(data);
+
+
+  } catch (error) {
+
+    showResult({
+
+      success: false,
+
+      error:
+        error.message
+
+    });
+
+  }
+
+}
+
+
+/*************************************************
+ * LOAD PRODUCTS
+ *************************************************/
+
+async function loadProducts() {
+
+  try {
+
+    const response =
+      await fetch(
+        API_URL +
+        "?action=products"
+      );
+
+
+    const data =
+      await response.json();
+
+
+    showResult(data);
+
+
+    if (
+      !data.success
+    ) {
+
+      return;
+
+    }
+
+
+    const startProduct =
+      document.getElementById(
+        "startProduct"
+      );
+
+
+    const dashboardProduct =
+      document.getElementById(
+        "dashboardProduct"
+      );
+
+
+    startProduct.innerHTML =
+      '<option value="">-- เลือกสินค้า --</option>';
+
+
+    dashboardProduct.innerHTML =
+      '<option value="all">ทั้งหมด</option>';
+
+
+    data.products.forEach(
+      function(product) {
+
+        const option1 =
+          document.createElement(
+            "option"
+          );
+
+
+        option1.value =
+          product.productId;
+
+
+        option1.textContent =
+          product.productId +
+          " - " +
+          product.productName;
+
+
+        startProduct.appendChild(
+          option1
+        );
+
+
+        const option2 =
+          document.createElement(
+            "option"
+          );
+
+
+        option2.value =
+          product.productId;
+
+
+        option2.textContent =
+          product.productId +
+          " - " +
+          product.productName;
+
+
+        dashboardProduct.appendChild(
+          option2
+        );
+
+      }
+    );
+
+
+  } catch (error) {
+
+    showResult({
+
+      success: false,
+
+      error:
+        error.message
+
+    });
+
+  }
+
+}
+
+
+/*************************************************
+ * START PRODUCTION
+ *************************************************/
+
+async function startProduction() {
+
+  const data = {
+
+    action:
+      "startProduction",
+
+    lot:
+      document.getElementById(
+        "startLot"
+      ).value.trim(),
+
+    product:
+      document.getElementById(
+        "startProduct"
+      ).value,
+
+    workerCount:
+      document.getElementById(
+        "startWorker"
+      ).value,
+
+    recordedBy:
+      document.getElementById(
+        "startRecordedBy"
+      ).value.trim(),
+
+    unit:
+      document.getElementById(
+        "startUnit"
+      ).value
+
+  };
+
+
+  if (
+    !data.lot ||
+    !data.product ||
+    !data.workerCount ||
+    !data.recordedBy ||
+    !data.unit
+  ) {
+
+    alert(
+      "กรุณากรอกข้อมูลให้ครบทุกช่อง"
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+
+        API_URL,
+
+        {
+
+          method:
+            "POST",
+
+          body:
+            JSON.stringify(
+              data
+            )
+
+        }
+
+      );
+
+
+    const result =
+      await response.json();
+
+
+    showResult(
+      result
+    );
+
+
+  } catch (error) {
+
+    showResult({
+
+      success: false,
+
+      error:
+        error.message
+
+    });
+
+  }
+
+}
+
+
+/*************************************************
+ * FINISH PRODUCTION
+ *************************************************/
+
+async function finishProduction() {
+
+  const data = {
+
+    action:
+      "finishProduction",
+
+    lot:
+      document.getElementById(
+        "finishLot"
+      ).value.trim(),
+
+    outputQty:
+      document.getElementById(
+        "finishOutput"
+      ).value,
+
+    recordedBy:
+      document.getElementById(
+        "finishRecordedBy"
+      ).value.trim()
+
+  };
+
+
+  if (
+    !data.lot ||
+    !data.outputQty ||
+    !data.recordedBy
+  ) {
+
+    alert(
+      "กรุณากรอกข้อมูลให้ครบทุกช่อง"
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+
+        API_URL,
+
+        {
+
+          method:
+            "POST",
+
+          body:
+            JSON.stringify(
+              data
+            )
+
+        }
+
+      );
+
+
+    const result =
+      await response.json();
+
+
+    showResult(
+      result
+    );
+
+
+  } catch (error) {
+
+    showResult({
+
+      success: false,
+
+      error:
+        error.message
+
+    });
+
+  }
+
+}
+
+
+/*************************************************
+ * LOAD DASHBOARD
+ *************************************************/
+
+async function loadDashboard() {
+
+  const startDate =
+    document.getElementById(
+      "dashboardStart"
+    ).value;
+
+
+  const endDate =
+    document.getElementById(
+      "dashboardEnd"
+    ).value;
+
+
+  const product =
+    document.getElementById(
+      "dashboardProduct"
+    ).value;
+
+
+  const unit =
+    document.getElementById(
+      "dashboardUnit"
+    ).value;
+
+
+  const groupBy =
+    document.getElementById(
+      "groupBy"
+    ).value;
+
+
+  let url =
+    API_URL +
+    "?action=dashboard";
+
+
+  if (startDate) {
+
+    url +=
+      "&startDate=" +
+      encodeURIComponent(
+        startDate
+      );
+
+  }
+
+
+  if (endDate) {
+
+    url +=
+      "&endDate=" +
+      encodeURIComponent(
+        endDate
+      );
+
+  }
+
+
+  if (product) {
+
+    url +=
+      "&product=" +
+      encodeURIComponent(
+        product
+      );
+
+  }
+
+
+  if (unit) {
+
+    url +=
+      "&unit=" +
+      encodeURIComponent(
+        unit
+      );
+
+  }
+
+
+  if (groupBy) {
+
+    url +=
+      "&groupBy=" +
+      encodeURIComponent(
+        groupBy
+      );
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        url
+      );
+
+
+    const data =
+      await response.json();
+
+
+    showResult(
+      data
+    );
+
+
+  } catch (error) {
+
+    showResult({
+
+      success: false,
+
+      error:
+        error.message
+
+    });
+
+  }
+
+}
+
+
+/*************************************************
+ * AUTO LOAD PRODUCTS
+ *************************************************/
+
+window.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
+    loadProducts();
+
+  }
+);
+
+
+</script>
+
+</body>
+</html>
