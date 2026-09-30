@@ -1,223 +1,532 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Product Management</title>
 
+
   <style>
+
     * {
       box-sizing: border-box;
     }
 
+
     body {
+
       margin: 0;
-      font-family: Arial, sans-serif;
+
+      font-family:
+        Arial,
+        "Noto Sans Thai",
+        sans-serif;
+
       background: #f4f6f8;
+
       color: #222;
+
     }
+
+
+    /* ======================================================
+       HEADER
+       ====================================================== */
 
     header {
+
       background: #1f4e78;
+
       color: white;
+
       padding: 18px 20px;
+
       text-align: center;
+
     }
+
 
     header h1 {
+
       margin: 0;
+
       font-size: 24px;
+
     }
+
 
     header p {
+
       margin: 6px 0 0;
+
       font-size: 14px;
+
       opacity: 0.9;
+
     }
+
+
+    /* ======================================================
+       CONTAINER
+       ====================================================== */
 
     .container {
+
       max-width: 1000px;
+
       margin: 25px auto;
+
       padding: 0 15px;
+
     }
+
+
+    /* ======================================================
+       CARD
+       ====================================================== */
 
     .card {
+
       background: white;
+
       border-radius: 12px;
+
       padding: 20px;
+
       margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.08);
+
     }
+
 
     .card h2 {
+
       margin-top: 0;
+
       color: #1f4e78;
+
       font-size: 20px;
+
     }
+
+
+    /* ======================================================
+       FORM
+       ====================================================== */
 
     .form-row {
+
       display: grid;
+
       grid-template-columns: 1fr auto;
+
       gap: 10px;
+
     }
+
 
     input {
+
       width: 100%;
+
       padding: 12px;
-      border: 1px solid #ccc;
+
+      border:
+        1px solid #ccc;
+
       border-radius: 8px;
+
       font-size: 16px;
+
+      outline: none;
+
     }
+
+
+    input:focus {
+
+      border-color: #1f4e78;
+
+    }
+
+
+    /* ======================================================
+       BUTTON
+       ====================================================== */
 
     button {
+
       border: none;
+
       border-radius: 8px;
+
       padding: 11px 18px;
+
       font-size: 15px;
+
       cursor: pointer;
+
+      transition: 0.2s;
+
     }
 
-    .btn-primary {
-      background: #1f4e78;
-      color: white;
-    }
-
-    .btn-edit {
-      background: #f0ad4e;
-      color: white;
-    }
-
-    .btn-delete {
-      background: #d9534f;
-      color: white;
-    }
-
-    .btn-cancel {
-      background: #777;
-      color: white;
-    }
 
     button:hover {
+
       opacity: 0.9;
+
     }
+
+
+    button:disabled {
+
+      opacity: 0.5;
+
+      cursor: not-allowed;
+
+    }
+
+
+    .btn-primary {
+
+      background: #1f4e78;
+
+      color: white;
+
+    }
+
+
+    .btn-edit {
+
+      background: #f0ad4e;
+
+      color: white;
+
+    }
+
+
+    .btn-delete {
+
+      background: #d9534f;
+
+      color: white;
+
+    }
+
+
+    .btn-activate {
+
+      background: #198754;
+
+      color: white;
+
+    }
+
+
+    .btn-cancel {
+
+      background: #777;
+
+      color: white;
+
+    }
+
+
+    /* ======================================================
+       MESSAGE
+       ====================================================== */
 
     .message {
+
       margin-top: 12px;
+
       padding: 12px;
+
       border-radius: 8px;
+
       display: none;
+
     }
+
 
     .success {
+
       background: #dff0d8;
+
       color: #3c763d;
+
     }
+
 
     .error {
+
       background: #f2dede;
+
       color: #a94442;
+
     }
+
+
+    /* ======================================================
+       TABLE
+       ====================================================== */
 
     .table-wrapper {
+
       overflow-x: auto;
+
     }
 
+
     table {
+
       width: 100%;
+
       border-collapse: collapse;
-      min-width: 650px;
+
+      min-width: 700px;
+
     }
+
 
     th,
     td {
-      border-bottom: 1px solid #ddd;
+
+      border-bottom:
+        1px solid #ddd;
+
       padding: 12px 10px;
+
       text-align: left;
+
+      vertical-align: middle;
+
     }
+
 
     th {
+
       background: #eef3f7;
+
       color: #1f4e78;
+
     }
+
+
+    tr:hover {
+
+      background: #fafafa;
+
+    }
+
+
+    /* ======================================================
+       STATUS
+       ====================================================== */
 
     .status-active {
+
       color: #198754;
+
       font-weight: bold;
+
     }
+
 
     .status-inactive {
+
       color: #999;
+
       font-weight: bold;
+
     }
+
+
+    /* ======================================================
+       ACTION
+       ====================================================== */
 
     .action-buttons {
+
       display: flex;
+
       gap: 6px;
+
       flex-wrap: wrap;
+
     }
+
+
+    /* ======================================================
+       EDIT BOX
+       ====================================================== */
 
     .edit-box {
+
       display: none;
-      margin-top: 15px;
+
+      margin-top: 12px;
+
       padding: 15px;
+
       background: #f8f9fa;
+
       border-radius: 8px;
-      border: 1px solid #ddd;
+
+      border:
+        1px solid #ddd;
+
     }
+
 
     .edit-box label {
+
       display: block;
+
       margin-bottom: 6px;
+
       font-weight: bold;
+
     }
+
 
     .edit-buttons {
+
       margin-top: 10px;
+
       display: flex;
+
       gap: 8px;
+
     }
 
+
+    /* ======================================================
+       LOADING
+       ====================================================== */
+
     .loading {
+
       text-align: center;
+
       padding: 20px;
+
       color: #777;
+
     }
+
+
+    /* ======================================================
+       EMPTY
+       ====================================================== */
+
+    .empty {
+
+      text-align: center;
+
+      padding: 25px;
+
+      color: #777;
+
+    }
+
+
+    /* ======================================================
+       MOBILE
+       ====================================================== */
 
     @media (max-width: 600px) {
 
       header h1 {
+
         font-size: 20px;
+
       }
 
-      .form-row {
-        grid-template-columns: 1fr;
+
+      .container {
+
+        margin-top: 15px;
+
       }
 
-      .form-row button {
-        width: 100%;
-      }
 
       .card {
+
         padding: 15px;
+
       }
+
+
+      .form-row {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+      .form-row button {
+
+        width: 100%;
+
+      }
+
+
+      button {
+
+        padding: 10px 14px;
+
+      }
+
     }
+
   </style>
+
 </head>
+
 
 <body>
 
+
+<!-- ========================================================
+     HEADER
+     ======================================================== -->
+
 <header>
-  <h1>PRODUCTION EFFICIENCY TRACKER</h1>
-  <p>Product Management</p>
+
+  <h1>
+    PRODUCTION EFFICIENCY TRACKER
+  </h1>
+
+  <p>
+    Product Management
+  </p>
+
 </header>
+
 
 <div class="container">
 
-  <!-- Add Product -->
+
+  <!-- ======================================================
+       ADD PRODUCT
+       ====================================================== -->
+
   <div class="card">
 
-    <h2>➕ เพิ่มสินค้า</h2>
+    <h2>
+      ➕ เพิ่มสินค้า
+    </h2>
+
 
     <div class="form-row">
 
@@ -225,16 +534,23 @@
         type="text"
         id="productName"
         placeholder="กรอกชื่อสินค้า"
+        maxlength="200"
+        autocomplete="off"
       >
 
+
       <button
+        id="addButton"
         class="btn-primary"
         onclick="addProduct()"
       >
-        เพิ่มสินค้า
+
+        ➕ เพิ่มสินค้า
+
       </button>
 
     </div>
+
 
     <div
       id="addMessage"
@@ -244,34 +560,64 @@
   </div>
 
 
-  <!-- Product List -->
+
+  <!-- ======================================================
+       PRODUCT LIST
+       ====================================================== -->
+
   <div class="card">
 
-    <h2>📋 รายการสินค้า</h2>
+    <h2>
+      📋 รายการสินค้า
+    </h2>
+
 
     <div
       id="loading"
       class="loading"
     >
+
       กำลังโหลดข้อมูล...
+
     </div>
+
 
     <div class="table-wrapper">
 
-      <table id="productTable" style="display:none;">
+      <table
+        id="productTable"
+        style="display:none;"
+      >
 
         <thead>
 
           <tr>
-            <th>Product ID</th>
-            <th>ชื่อสินค้า</th>
-            <th>สถานะ</th>
-            <th>จัดการ</th>
+
+            <th>
+              Product ID
+            </th>
+
+            <th>
+              ชื่อสินค้า
+            </th>
+
+            <th>
+              สถานะ
+            </th>
+
+            <th>
+              จัดการ
+            </th>
+
           </tr>
 
         </thead>
 
-        <tbody id="productTableBody">
+
+        <tbody
+          id="productTableBody"
+        >
+
         </tbody>
 
       </table>
@@ -280,237 +626,434 @@
 
   </div>
 
+
 </div>
+
 
 
 <script>
 
-  // ============================================
-  // Google Apps Script Web App URL
-  // ============================================
+
+  // ==========================================================
+  // API URL
+  // ==========================================================
 
   const API_URL =
-    "https://script.google.com/macros/s/AKfycbwvEqUvp_xEz6cPgzKK622ZwAC5aGEbMGwqO1KKvQv3IGnxY_gvxrWNYit6TPoK6Nb0/exec";
+    "https://script.google.com/macros/s/AKfycbx_zRo05cpH_Fl488sgUCMC18U0ziSDJM_ytcSGSWsM-RYD5wqw54M0MNdpG6YvmG4Y/exec";
 
+
+  // ==========================================================
+  // GLOBAL
+  // ==========================================================
 
   let products = [];
 
 
-  // ============================================
-  // Utility
-  // ============================================
 
-  function showMessage(elementId, message, type) {
+  // ==========================================================
+  // MESSAGE
+  // ==========================================================
 
-    const element = document.getElementById(elementId);
+  function showMessage(
+    elementId,
+    message,
+    type
+  ) {
 
-    element.textContent = message;
+    const element =
+      document.getElementById(
+        elementId
+      );
 
-    element.className = "message " + type;
 
-    element.style.display = "block";
+    element.textContent =
+      message;
+
+
+    element.className =
+      "message " + type;
+
+
+    element.style.display =
+      "block";
 
   }
 
 
-  function hideMessage(elementId) {
+  function hideMessage(
+    elementId
+  ) {
 
-    const element = document.getElementById(elementId);
+    const element =
+      document.getElementById(
+        elementId
+      );
 
-    element.style.display = "none";
+
+    element.style.display =
+      "none";
 
   }
 
 
-  // ============================================
-  // Load Products
-  // ============================================
+
+  // ==========================================================
+  // LOAD PRODUCTS
+  // ==========================================================
 
   async function loadProducts() {
 
     const loading =
-      document.getElementById("loading");
+      document.getElementById(
+        "loading"
+      );
+
 
     const table =
-      document.getElementById("productTable");
+      document.getElementById(
+        "productTable"
+      );
+
 
     try {
 
-      loading.style.display = "block";
+      loading.style.display =
+        "block";
 
-      table.style.display = "none";
 
-      const response = await fetch(
-        API_URL + "?action=allProducts"
-      );
+      table.style.display =
+        "none";
 
-      const data = await response.json();
 
-      if (!data.success) {
+      const response =
+        await fetch(
+          API_URL +
+          "?action=allProducts"
+        );
+
+
+      if (!response.ok) {
 
         throw new Error(
-          data.message || "ไม่สามารถโหลดข้อมูลสินค้าได้"
+          "HTTP Error " +
+          response.status
         );
 
       }
 
-      products = data.products || [];
+
+      const data =
+        await response.json();
+
+
+      if (!data.success) {
+
+        throw new Error(
+          data.message ||
+          "ไม่สามารถโหลดข้อมูลสินค้าได้"
+        );
+
+      }
+
+
+      products =
+        data.products || [];
+
 
       renderProducts();
 
-      loading.style.display = "none";
 
-      table.style.display = "table";
+      loading.style.display =
+        "none";
+
+
+      table.style.display =
+        "table";
+
 
     } catch (error) {
 
       loading.textContent =
-        "เกิดข้อผิดพลาด: " + error.message;
+        "เกิดข้อผิดพลาด: " +
+        error.message;
 
     }
 
   }
 
 
-  // ============================================
-  // Render Product Table
-  // ============================================
+
+  // ==========================================================
+  // RENDER PRODUCTS
+  // ==========================================================
 
   function renderProducts() {
 
     const tbody =
-      document.getElementById("productTableBody");
+      document.getElementById(
+        "productTableBody"
+      );
+
 
     tbody.innerHTML = "";
 
-    if (products.length === 0) {
+
+    if (
+      products.length === 0
+    ) {
 
       tbody.innerHTML = `
+
         <tr>
-          <td colspan="4" style="text-align:center;">
+
+          <td
+            colspan="4"
+            class="empty"
+          >
+
             ยังไม่มีข้อมูลสินค้า
+
           </td>
+
         </tr>
+
       `;
 
       return;
+
     }
 
 
-    products.forEach(product => {
-
-      const tr =
-        document.createElement("tr");
-
-      const statusClass =
-        product.status === "Active"
-          ? "status-active"
-          : "status-inactive";
-
-      const statusText =
-        product.status === "Active"
-          ? "Active"
-          : "Inactive";
+    products.forEach(
+      function(product) {
 
 
-      tr.innerHTML = `
+        const tr =
+          document.createElement(
+            "tr"
+          );
 
-        <td>${escapeHtml(product.productId)}</td>
 
-        <td>
-          ${escapeHtml(product.productName)}
-        </td>
+        const status =
+          String(
+            product.status || ""
+          ).trim();
 
-        <td class="${statusClass}">
-          ${statusText}
-        </td>
 
-        <td>
+        const statusClass =
+          status === "Active"
+            ? "status-active"
+            : "status-inactive";
 
-          <div class="action-buttons">
 
-            <button
-              class="btn-edit"
-              onclick="editProduct('${escapeJs(product.productId)}')"
-            >
-              ✏️ แก้ไข
-            </button>
+        const statusText =
+          status === "Active"
+            ? "Active"
+            : "Inactive";
 
-            ${
-              product.status === "Active"
-                ? `
+
+        tr.innerHTML = `
+
+          <td>
+            ${escapeHtml(
+              product.productId
+            )}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              product.productName
+            )}
+          </td>
+
+
+          <td
+            class="${statusClass}"
+          >
+            ${statusText}
+          </td>
+
+
+          <td>
+
+            <div class="action-buttons">
+
+
+              <!-- EDIT -->
+
+              <button
+                class="btn-edit"
+                onclick="editProduct(
+                  '${escapeJs(
+                    product.productId
+                  )}'
+                )"
+              >
+
+                ✏️ แก้ไข
+
+              </button>
+
+
+              <!-- ACTIVE -->
+
+              ${
+                status === "Active"
+
+                ?
+
+                `
+
                   <button
                     class="btn-delete"
-                    onclick="deleteProduct('${escapeJs(product.productId)}')"
+                    onclick="deleteProduct(
+                      '${escapeJs(
+                        product.productId
+                      )}'
+                    )"
                   >
+
                     🗑️ ปิดใช้งาน
+
                   </button>
+
                 `
-                : ""
-            }
 
-          </div>
+                :
 
-          <div
-            id="edit-${escapeHtml(product.productId)}"
-            class="edit-box"
-          >
+                `
 
-            <label>
-              ชื่อสินค้า
-            </label>
+                  <button
+                    class="btn-activate"
+                    onclick="activateProduct(
+                      '${escapeJs(
+                        product.productId
+                      )}'
+                    )"
+                  >
 
-            <input
-              type="text"
-              id="input-${escapeHtml(product.productId)}"
-              value="${escapeHtml(product.productName)}"
-            >
+                    ▶️ เปิดใช้งาน
 
-            <div class="edit-buttons">
+                  </button>
 
-              <button
-                class="btn-primary"
-                onclick="saveProduct('${escapeJs(product.productId)}')"
-              >
-                💾 บันทึก
-              </button>
+                `
 
-              <button
-                class="btn-cancel"
-                onclick="cancelEdit('${escapeJs(product.productId)}')"
-              >
-                ยกเลิก
-              </button>
+              }
 
             </div>
 
-          </div>
 
-        </td>
+            <!-- EDIT BOX -->
 
-      `;
+            <div
+              id="edit-${escapeHtml(
+                product.productId
+              )}"
+              class="edit-box"
+            >
 
-      tbody.appendChild(tr);
 
-    });
+              <label>
+
+                ชื่อสินค้า
+
+              </label>
+
+
+              <input
+                type="text"
+                id="input-${escapeHtml(
+                  product.productId
+                )}"
+                value="${escapeHtml(
+                  product.productName
+                )}"
+                maxlength="200"
+              >
+
+
+              <div
+                class="edit-buttons"
+              >
+
+                <button
+                  class="btn-primary"
+                  onclick="saveProduct(
+                    '${escapeJs(
+                      product.productId
+                    )}'
+                  )"
+                >
+
+                  💾 บันทึก
+
+                </button>
+
+
+                <button
+                  class="btn-cancel"
+                  onclick="cancelEdit(
+                    '${escapeJs(
+                      product.productId
+                    )}'
+                  )"
+                >
+
+                  ยกเลิก
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </td>
+
+        `;
+
+
+        tbody.appendChild(
+          tr
+        );
+
+      }
+    );
 
   }
 
 
-  // ============================================
-  // Add Product
-  // ============================================
+
+  // ==========================================================
+  // ADD PRODUCT
+  // ==========================================================
 
   async function addProduct() {
 
-    hideMessage("addMessage");
+    hideMessage(
+      "addMessage"
+    );
+
 
     const input =
-      document.getElementById("productName");
+      document.getElementById(
+        "productName"
+      );
+
+
+    const button =
+      document.getElementById(
+        "addButton"
+      );
+
 
     const productName =
       input.value.trim();
 
+
+    // --------------------------------------------------------
+    // Validation
+    // --------------------------------------------------------
 
     if (!productName) {
 
@@ -520,28 +1063,48 @@
         "error"
       );
 
+      input.focus();
+
       return;
+
     }
 
 
-    if (!confirm(
-      "ต้องการเพิ่มสินค้า \"" +
-      productName +
-      "\" ใช่หรือไม่?"
-    )) {
+    // --------------------------------------------------------
+    // Confirmation
+    // --------------------------------------------------------
+
+    if (
+      !confirm(
+        "ต้องการเพิ่มสินค้า\n\n" +
+        productName +
+        "\n\nใช่หรือไม่?"
+      )
+    ) {
 
       return;
+
     }
 
 
     try {
 
+      button.disabled =
+        true;
+
+
+      button.textContent =
+        "กำลังบันทึก...";
+
+
       const data =
         await postData({
 
-          action: "addProduct",
+          action:
+            "addProduct",
 
-          productName: productName
+          productName:
+            productName
 
         });
 
@@ -549,7 +1112,8 @@
       if (!data.success) {
 
         throw new Error(
-          data.message || "ไม่สามารถเพิ่มสินค้าได้"
+          data.message ||
+          "ไม่สามารถเพิ่มสินค้าได้"
         );
 
       }
@@ -557,71 +1121,142 @@
 
       showMessage(
         "addMessage",
-        "เพิ่มสินค้าเรียบร้อยแล้ว Product ID: " +
+
+        "เพิ่มสินค้าเรียบร้อยแล้ว " +
+        "Product ID: " +
         data.productId,
+
         "success"
       );
 
 
       input.value = "";
 
+
       await loadProducts();
+
 
     } catch (error) {
 
       showMessage(
         "addMessage",
+
         error.message,
+
         "error"
       );
 
+    } finally {
+
+      button.disabled =
+        false;
+
+
+      button.textContent =
+        "➕ เพิ่มสินค้า";
+
     }
 
   }
 
 
-  // ============================================
-  // Edit Product
-  // ============================================
 
-  function editProduct(productId) {
+  // ==========================================================
+  // EDIT PRODUCT
+  // ==========================================================
+
+  function editProduct(
+    productId
+  ) {
 
     const box =
       document.getElementById(
-        "edit-" + productId
+        "edit-" +
+        productId
       );
 
-    if (box) {
 
-      box.style.display = "block";
+    if (!box) {
+
+      return;
 
     }
 
-  }
 
+    box.style.display =
+      "block";
 
-  function cancelEdit(productId) {
-
-    const box =
-      document.getElementById(
-        "edit-" + productId
-      );
-
-    if (box) {
-
-      box.style.display = "none";
-
-    }
-
-  }
-
-
-  async function saveProduct(productId) {
 
     const input =
       document.getElementById(
-        "input-" + productId
+        "input-" +
+        productId
       );
+
+
+    if (input) {
+
+      input.focus();
+
+      input.select();
+
+    }
+
+  }
+
+
+
+  // ==========================================================
+  // CANCEL EDIT
+  // ==========================================================
+
+  function cancelEdit(
+    productId
+  ) {
+
+    const box =
+      document.getElementById(
+        "edit-" +
+        productId
+      );
+
+
+    if (box) {
+
+      box.style.display =
+        "none";
+
+    }
+
+  }
+
+
+
+  // ==========================================================
+  // SAVE PRODUCT
+  // ==========================================================
+
+  async function saveProduct(
+    productId
+  ) {
+
+    const input =
+      document.getElementById(
+        "input-" +
+        productId
+      );
+
+
+    if (!input) {
+
+      alert(
+        "ไม่พบช่องแก้ไขสินค้า"
+      );
+
+      return;
+
+    }
+
 
     const productName =
       input.value.trim();
@@ -629,19 +1264,27 @@
 
     if (!productName) {
 
-      alert("กรุณากรอกชื่อสินค้า");
+      alert(
+        "กรุณากรอกชื่อสินค้า"
+      );
+
+      input.focus();
 
       return;
+
     }
 
 
-    if (!confirm(
-      "ต้องการแก้ไขชื่อสินค้าเป็น \"" +
-      productName +
-      "\" ใช่หรือไม่?"
-    )) {
+    if (
+      !confirm(
+        "ต้องการแก้ไขชื่อสินค้าเป็น\n\n" +
+        productName +
+        "\n\nใช่หรือไม่?"
+      )
+    ) {
 
       return;
+
     }
 
 
@@ -650,11 +1293,14 @@
       const data =
         await postData({
 
-          action: "updateProduct",
+          action:
+            "updateProduct",
 
-          productId: productId,
+          productId:
+            productId,
 
-          productName: productName
+          productName:
+            productName
 
         });
 
@@ -662,20 +1308,25 @@
       if (!data.success) {
 
         throw new Error(
-          data.message || "ไม่สามารถแก้ไขสินค้าได้"
+          data.message ||
+          "ไม่สามารถแก้ไขสินค้าได้"
         );
 
       }
 
 
-      alert("แก้ไขสินค้าเรียบร้อยแล้ว");
+      alert(
+        "แก้ไขสินค้าเรียบร้อยแล้ว"
+      );
+
 
       await loadProducts();
+
 
     } catch (error) {
 
       alert(
-        "เกิดข้อผิดพลาด: " +
+        "เกิดข้อผิดพลาด\n\n" +
         error.message
       );
 
@@ -684,33 +1335,49 @@
   }
 
 
-  // ============================================
-  // Soft Delete
-  // ============================================
 
-  async function deleteProduct(productId) {
+  // ==========================================================
+  // DELETE / DEACTIVATE PRODUCT
+  // ==========================================================
+
+  async function deleteProduct(
+    productId
+  ) {
 
     const product =
       products.find(
-        p => p.productId === productId
+        function(p) {
+
+          return (
+            p.productId ===
+            productId
+          );
+
+        }
       );
 
 
     if (!product) {
 
-      alert("ไม่พบข้อมูลสินค้า");
+      alert(
+        "ไม่พบข้อมูลสินค้า"
+      );
 
       return;
+
     }
 
 
-    if (!confirm(
-      "ต้องการปิดใช้งานสินค้า\n\n" +
-      product.productName +
-      "\n\nใช่หรือไม่?"
-    )) {
+    if (
+      !confirm(
+        "ต้องการปิดใช้งานสินค้า\n\n" +
+        product.productName +
+        "\n\nใช่หรือไม่?"
+      )
+    ) {
 
       return;
+
     }
 
 
@@ -719,9 +1386,11 @@
       const data =
         await postData({
 
-          action: "deleteProduct",
+          action:
+            "deleteProduct",
 
-          productId: productId
+          productId:
+            productId
 
         });
 
@@ -729,7 +1398,8 @@
       if (!data.success) {
 
         throw new Error(
-          data.message || "ไม่สามารถปิดใช้งานสินค้าได้"
+          data.message ||
+          "ไม่สามารถปิดใช้งานสินค้าได้"
         );
 
       }
@@ -742,10 +1412,11 @@
 
       await loadProducts();
 
+
     } catch (error) {
 
       alert(
-        "เกิดข้อผิดพลาด: " +
+        "เกิดข้อผิดพลาด\n\n" +
         error.message
       );
 
@@ -754,26 +1425,136 @@
   }
 
 
-  // ============================================
-  // POST API
-  // ============================================
 
-  async function postData(payload) {
+  // ==========================================================
+  // ACTIVATE PRODUCT
+  // ==========================================================
+
+  async function activateProduct(
+    productId
+  ) {
+
+    const product =
+      products.find(
+        function(p) {
+
+          return (
+            p.productId ===
+            productId
+          );
+
+        }
+      );
+
+
+    if (!product) {
+
+      alert(
+        "ไม่พบข้อมูลสินค้า"
+      );
+
+      return;
+
+    }
+
+
+    if (
+      !confirm(
+        "ต้องการเปิดใช้งานสินค้า\n\n" +
+        product.productName +
+        "\n\nใช่หรือไม่?"
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    try {
+
+      const data =
+        await postData({
+
+          action:
+            "activateProduct",
+
+          productId:
+            productId
+
+        });
+
+
+      if (!data.success) {
+
+        throw new Error(
+          data.message ||
+          "ไม่สามารถเปิดใช้งานสินค้าได้"
+        );
+
+      }
+
+
+      alert(
+        "เปิดใช้งานสินค้าเรียบร้อยแล้ว"
+      );
+
+
+      await loadProducts();
+
+
+    } catch (error) {
+
+      alert(
+        "เกิดข้อผิดพลาด\n\n" +
+        error.message
+      );
+
+    }
+
+  }
+
+
+
+  // ==========================================================
+  // POST API
+  // ==========================================================
+
+  async function postData(
+    payload
+  ) {
 
     const response =
       await fetch(
         API_URL,
         {
+
           method: "POST",
 
           headers: {
+
             "Content-Type":
               "text/plain;charset=utf-8"
+
           },
 
-          body: JSON.stringify(payload)
+          body:
+            JSON.stringify(
+              payload
+            )
+
         }
       );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "HTTP Error " +
+        response.status
+      );
+
+    }
 
 
     const data =
@@ -785,41 +1566,109 @@
   }
 
 
-  // ============================================
-  // Security / HTML Escape
-  // ============================================
 
-  function escapeHtml(value) {
+  // ==========================================================
+  // ESCAPE HTML
+  // ==========================================================
 
-    return String(value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+  function escapeHtml(
+    value
+  ) {
+
+    return String(
+      value ?? ""
+    )
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+      .replace(
+        /</g,
+        "&lt;"
+      )
+      .replace(
+        />/g,
+        "&gt;"
+      )
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+      .replace(
+        /'/g,
+        "&#039;"
+      );
 
   }
 
 
-  function escapeJs(value) {
 
-    return String(value)
-      .replace(/\\/g, "\\\\")
-      .replace(/'/g, "\\'");
+  // ==========================================================
+  // ESCAPE JAVASCRIPT
+  // ==========================================================
+
+  function escapeJs(
+    value
+  ) {
+
+    return String(
+      value ?? ""
+    )
+      .replace(
+        /\\/g,
+        "\\\\"
+      )
+      .replace(
+        /'/g,
+        "\\'"
+      );
 
   }
 
 
-  // ============================================
-  // Start
-  // ============================================
+
+  // ==========================================================
+  // ENTER KEY
+  // ==========================================================
+
+  document
+    .getElementById(
+      "productName"
+    )
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if (
+          event.key === "Enter"
+        ) {
+
+          addProduct();
+
+        }
+
+      }
+    );
+
+
+
+  // ==========================================================
+  // INITIAL LOAD
+  // ==========================================================
 
   document.addEventListener(
     "DOMContentLoaded",
-    loadProducts
+    function() {
+
+      loadProducts();
+
+    }
   );
+
 
 </script>
 
+
 </body>
+
 </html>
