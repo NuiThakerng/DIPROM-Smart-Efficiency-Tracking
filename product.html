@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Product Management</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    header {
+      background: #1f4e78;
+      color: white;
+      padding: 18px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 25px auto;
+      padding: 0 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #1f4e78;
+      font-size: 20px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 11px 18px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #1f4e78;
+      color: white;
+    }
+
+    .btn-edit {
+      background: #f0ad4e;
+      color: white;
+    }
+
+    .btn-delete {
+      background: #d9534f;
+      color: white;
+    }
+
+    .btn-cancel {
+      background: #777;
+      color: white;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .message {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .success {
+      background: #dff0d8;
+      color: #3c763d;
+    }
+
+    .error {
+      background: #f2dede;
+      color: #a94442;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #ddd;
+      padding: 12px 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #eef3f7;
+      color: #1f4e78;
+    }
+
+    .status-active {
+      color: #198754;
+      font-weight: bold;
+    }
+
+    .status-inactive {
+      color: #999;
+      font-weight: bold;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .edit-box {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .edit-box label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .edit-buttons {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+    }
+
+    @media (max-width: 600px) {
+
+      header h1 {
+        font-size: 20px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row button {
+        width: 100%;
+      }
+
+      .card {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>PRODUCTION EFFICIENCY TRACKER</h1>
+  <p>Product Management</p>
+</header>
+
+<div class="container">
+
+  <!-- Add Product -->
+  <div class="card">
+
+    <h2>➕ เพิ่มสินค้า</h2>
+
+    <div class="form-row">
+
+      <input
+        type="text"
+        id="productName"
+        placeholder="กรอกชื่อสินค้า"
+      >
+
+      <button
+        class="btn-primary"
+        onclick="addProduct()"
+      >
+        เพิ่มสินค้า
+      </button>
+
+    </div>
+
+    <div
+      id="addMessage"
+      class="message"
+    ></div>
+
+  </div>
+
+
+  <!-- Product List -->
+  <div class="card">
+
+    <h2>📋 รายการสินค้า</h2>
+
+    <div
+      id="loading"
+      class="loading"
+    >
+      กำลังโหลดข้อมูล...
+    </div>
+
+    <div class="table-wrapper">
+
+      <table id="productTable" style="display:none;">
+
+        <thead>
+
+          <tr>
+            <th>Product ID</th>
+            <th>ชื่อสินค้า</th>
+            <th>สถานะ</th>
+            <th>จัดการ</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="productTableBody">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  // ============================================
+  // Google Apps Script Web App URL
+  // ============================================
+
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbwvEqUvp_xEz6cPgzKK622ZwAC5aGEbMGwqO1KKvQv3IGnxY_gvxrWNYit6TPoK6Nb0/exec";
+
+
+  let products = [];
+
+
+  // ============================================
+  // Utility
+  // ============================================
+
+  function showMessage(elementId, message, type) {
+
+    const element = document.getElementById(elementId);
+
+    element.textContent = message;
+
+    element.className = "message " + type;
+
+    element.style.display = "block";
+
+  }
+
+
+  function hideMessage(elementId) {
+
+    const element = document.getElementById(elementId);
+
+    element.style.display = "none";
+
+  }
+
+
+  // ============================================
+  // Load Products
+  // ============================================
+
+  async function loadProducts() {
+
+    const loading =
+      document.getElementById("loading");
+
+    const table =
+      document.getElementById("productTable");
+
+    try {
+
+      loading.style.display = "block";
+
+      table.style.display = "none";
+
+      const response = await fetch(
+        API_URL + "?action=allProducts"
+      );
+
+      const data = await response.json();
+
+      if (!data.success) {
+
+        throw new Error(
+          data.message || "ไม่สามารถโหลดข้อมูลสินค้าได้"
+        );
+
+      }
+
+      products = data.products || [];
+
+      renderProducts();
+
+      loading.style.display = "none";
+
+      table.style.display = "table";
+
+    } catch (error) {
+
+      loading.textContent =
+        "เกิดข้อผิดพลาด: " + error.message;
+
+    }
+
+  }
+
+
+  // ============================================
+  // Render Product Table
+  // ============================================
+
+  function renderProducts() {
+
+    const tbody =
+      document.getElementById("productTableBody");
+
+    tbody.innerHTML = "";
+
+    if (products.length === 0) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align:center;">
+            ยังไม่มีข้อมูลสินค้า
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    products.forEach(product => {
+
+      const tr =
+        document.createElement("tr");
+
+      const statusClass =
+        product.status === "Active"
+          ? "status-active"
+          : "status-inactive";
+
+      const statusText =
+        product.status === "Active"
+          ? "Active"
+          : "Inactive";
+
+
+      tr.innerHTML = `
+
+        <td>${escapeHtml(product.productId)}</td>
+
+        <td>
+          ${escapeHtml(product.productName)}
+        </td>
+
+        <td class="${statusClass}">
+          ${statusText}
+        </td>
+
+        <td>
+
+          <div class="action-buttons">
+
+            <button
+              class="btn-edit"
+              onclick="editProduct('${escapeJs(product.productId)}')"
+            >
+              ✏️ แก้ไข
+            </button>
+
+            ${
+              product.status === "Active"
+                ? `
+                  <button
+                    class="btn-delete"
+                    onclick="deleteProduct('${escapeJs(product.productId)}')"
+                  >
+                    🗑️ ปิดใช้งาน
+                  </button>
+                `
+                : ""
+            }
+
+          </div>
+
+          <div
+            id="edit-${escapeHtml(product.productId)}"
+            class="edit-box"
+          >
+
+            <label>
+              ชื่อสินค้า
+            </label>
+
+            <input
+              type="text"
+              id="input-${escapeHtml(product.productId)}"
+              value="${escapeHtml(product.productName)}"
+            >
+
+            <div class="edit-buttons">
+
+              <button
+                class="btn-primary"
+                onclick="saveProduct('${escapeJs(product.productId)}')"
+              >
+                💾 บันทึก
+              </button>
+
+              <button
+                class="btn-cancel"
+                onclick="cancelEdit('${escapeJs(product.productId)}')"
+              >
+                ยกเลิก
+              </button>
+
+            </div>
+
+          </div>
+
+        </td>
+
+      `;
+
+      tbody.appendChild(tr);
+
+    });
+
+  }
+
+
+  // ============================================
+  // Add Product
+  // ============================================
+
+  async function addProduct() {
+
+    hideMessage("addMessage");
+
+    const input =
+      document.getElementById("productName");
+
+    const productName =
+      input.value.trim();
+
+
+    if (!productName) {
+
+      showMessage(
+        "addMessage",
+        "กรุณากรอกชื่อสินค้า",
+        "error"
+      );
+
+      return;
+    }
+
+
+    if (!confirm(
+      "ต้องการเพิ่มสินค้า \"" +
+      productName +
+      "\" ใช่หรือไม่?"
+    )) {
+
+      return;
+    }
+
+
+    try {
+
+      const data =
+        await postData({
+
+          action: "addProduct",
+
+          productName: productName
+
+        });
+
+
+      if (!data.success) {
+
+        throw new Error(
+          data.message || "ไม่สามารถเพิ่มสินค้าได้"
+        );
+
+      }
+
+
+      showMessage(
+        "addMessage",
+        "เพิ่มสินค้าเรียบร้อยแล้ว Product ID: " +
+        data.productId,
+        "success"
+      );
+
+
+      input.value = "";
+
+      await loadProducts();
+
+    } catch (error) {
+
+      showMessage(
+        "addMessage",
+        error.message,
+        "error"
+      );
+
+    }
+
+  }
+
+
+  // ============================================
+  // Edit Product
+  // ============================================
+
+  function editProduct(productId) {
+
+    const box =
+      document.getElementById(
+        "edit-" + productId
+      );
+
+    if (box) {
+
+      box.style.display = "block";
+
+    }
+
+  }
+
+
+  function cancelEdit(productId) {
+
+    const box =
+      document.getElementById(
+        "edit-" + productId
+      );
+
+    if (box) {
+
+      box.style.display = "none";
+
+    }
+
+  }
+
+
+  async function saveProduct(productId) {
+
+    const input =
+      document.getElementById(
+        "input-" + productId
+      );
+
+    const productName =
+      input.value.trim();
+
+
+    if (!productName) {
+
+      alert("กรุณากรอกชื่อสินค้า");
+
+      return;
+    }
+
+
+    if (!confirm(
+      "ต้องการแก้ไขชื่อสินค้าเป็น \"" +
+      productName +
+      "\" ใช่หรือไม่?"
+    )) {
+
+      return;
+    }
+
+
+    try {
+
+      const data =
+        await postData({
+
+          action: "updateProduct",
+
+          productId: productId,
+
+          productName: productName
+
+        });
+
+
+      if (!data.success) {
+
+        throw new Error(
+          data.message || "ไม่สามารถแก้ไขสินค้าได้"
+        );
+
+      }
+
+
+      alert("แก้ไขสินค้าเรียบร้อยแล้ว");
+
+      await loadProducts();
+
+    } catch (error) {
+
+      alert(
+        "เกิดข้อผิดพลาด: " +
+        error.message
+      );
+
+    }
+
+  }
+
+
+  // ============================================
+  // Soft Delete
+  // ============================================
+
+  async function deleteProduct(productId) {
+
+    const product =
+      products.find(
+        p => p.productId === productId
+      );
+
+
+    if (!product) {
+
+      alert("ไม่พบข้อมูลสินค้า");
+
+      return;
+    }
+
+
+    if (!confirm(
+      "ต้องการปิดใช้งานสินค้า\n\n" +
+      product.productName +
+      "\n\nใช่หรือไม่?"
+    )) {
+
+      return;
+    }
+
+
+    try {
+
+      const data =
+        await postData({
+
+          action: "deleteProduct",
+
+          productId: productId
+
+        });
+
+
+      if (!data.success) {
+
+        throw new Error(
+          data.message || "ไม่สามารถปิดใช้งานสินค้าได้"
+        );
+
+      }
+
+
+      alert(
+        "ปิดใช้งานสินค้าเรียบร้อยแล้ว"
+      );
+
+
+      await loadProducts();
+
+    } catch (error) {
+
+      alert(
+        "เกิดข้อผิดพลาด: " +
+        error.message
+      );
+
+    }
+
+  }
+
+
+  // ============================================
+  // POST API
+  // ============================================
+
+  async function postData(payload) {
+
+    const response =
+      await fetch(
+        API_URL,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "text/plain;charset=utf-8"
+          },
+
+          body: JSON.stringify(payload)
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    return data;
+
+  }
+
+
+  // ============================================
+  // Security / HTML Escape
+  // ============================================
+
+  function escapeHtml(value) {
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  function escapeJs(value) {
+
+    return String(value)
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'");
+
+  }
+
+
+  // ============================================
+  // Start
+  // ============================================
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    loadProducts
+  );
+
+</script>
+
+</body>
+</html>
