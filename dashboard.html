@@ -1,0 +1,2011 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>PRODUCTION EFFICIENCY TRACKER - Dashboard</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans Thai", sans-serif;
+      background: #f4f6f9;
+      color: #1f2937;
+    }
+
+    .header {
+      background: #1f4e78;
+      color: white;
+      padding: 20px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    .header p {
+      margin: 5px 0 0;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #1f4e78;
+      font-size: 20px;
+    }
+
+    /* FILTER */
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      font-size: 14px;
+      background: white;
+    }
+
+    button {
+      border: none;
+      border-radius: 7px;
+      padding: 11px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #1f4e78;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #64748b;
+      color: white;
+    }
+
+    .btn-success {
+      background: #198754;
+      color: white;
+    }
+
+    .quick-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .quick-buttons button {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .quick-buttons button:hover {
+      background: #cbd5e1;
+    }
+
+    /* KPI */
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 12px;
+    }
+
+    .kpi {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px;
+      min-height: 110px;
+    }
+
+    .kpi-title {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+
+    .kpi-value {
+      font-size: 25px;
+      font-weight: bold;
+      color: #1f4e78;
+      word-break: break-word;
+    }
+
+    .kpi-unit {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 5px;
+    }
+
+    /* SUMMARY */
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .summary-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 15px;
+      background: #fafafa;
+    }
+
+    .summary-box h3 {
+      margin: 0 0 10px;
+      color: #1f4e78;
+      font-size: 17px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 7px 0;
+      font-size: 14px;
+    }
+
+    /* CHART */
+
+    .chart-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    canvas {
+      width: 100%;
+      min-height: 320px;
+      display: block;
+    }
+
+    /* TABLE */
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1000px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px;
+      text-align: left;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    th {
+      background: #1f4e78;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* STATUS */
+
+    .status {
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .status.success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status.error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status.loading {
+      display: block;
+      background: #e0f2fe;
+      color: #075985;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: #64748b;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 1200px) {
+      .kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .filter-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+
+      .container {
+        padding: 10px;
+      }
+
+      .header {
+        padding: 15px;
+      }
+
+      .header h1 {
+        font-size: 21px;
+      }
+
+      .filter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .kpi-value {
+        font-size: 21px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>PRODUCTION EFFICIENCY TRACKER</h1>
+    <p>Production Dashboard</p>
+  </div>
+
+  <div class="container">
+
+    <!-- STATUS -->
+
+    <div id="statusBox" class="status"></div>
+
+    <!-- FILTER -->
+
+    <div class="card">
+
+      <h2>🔎 ตัวกรองข้อมูล</h2>
+
+      <div class="filter-grid">
+
+        <div class="field">
+          <label>วันที่เริ่มต้น</label>
+          <input type="date" id="startDate">
+        </div>
+
+        <div class="field">
+          <label>วันที่สิ้นสุด</label>
+          <input type="date" id="endDate">
+        </div>
+
+        <div class="field">
+          <label>Product</label>
+          <select id="productFilter">
+            <option value="">ทั้งหมด</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Unit</label>
+          <select id="unitFilter">
+            <option value="">ทั้งหมด</option>
+            <option value="ชิ้น/แพ็ค">ชิ้น/แพ็ค</option>
+            <option value="กิโลกรัม">กิโลกรัม</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>แสดงผลแบบ</label>
+          <select id="groupBy">
+            <option value="day">Daily</option>
+            <option value="week">Weekly</option>
+            <option value="month">Monthly</option>
+            <option value="year">Yearly</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="quick-buttons">
+
+        <button onclick="setToday()">
+          วันนี้
+        </button>
+
+        <button onclick="setThisWeek()">
+          สัปดาห์นี้
+        </button>
+
+        <button onclick="setThisMonth()">
+          เดือนนี้
+        </button>
+
+        <button onclick="setThisYear()">
+          ปีนี้
+        </button>
+
+        <button class="btn-primary" onclick="loadDashboard()">
+          🔍 แสดงผล
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- KPI -->
+
+    <div class="card">
+
+      <h2>📊 KPI Summary</h2>
+
+      <div class="kpi-grid">
+
+        <div class="kpi">
+          <div class="kpi-title">จำนวน Lot</div>
+          <div class="kpi-value" id="kpiLots">-</div>
+          <div class="kpi-unit">Lots</div>
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-title">Output รวม</div>
+          <div class="kpi-value" id="kpiOutput">-</div>
+          <div class="kpi-unit" id="kpiOutputUnit">-</div>
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-title">Production Hours</div>
+          <div class="kpi-value" id="kpiHours">-</div>
+          <div class="kpi-unit">Hours</div>
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-title">Worker Hours</div>
+          <div class="kpi-value" id="kpiWorkerHours">-</div>
+          <div class="kpi-unit">Person-Hours</div>
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-title">จำนวนคนเฉลี่ย</div>
+          <div class="kpi-value" id="kpiWorkers">-</div>
+          <div class="kpi-unit">Persons</div>
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-title">Output / Hour</div>
+          <div class="kpi-value" id="kpiPerHour">-</div>
+          <div class="kpi-unit">Output / Hour</div>
+        </div>
+
+        <div class="kpi">
+          <div class="kpi-title">Output / Person / Hour</div>
+          <div class="kpi-value" id="kpiPerPersonHour">-</div>
+          <div class="kpi-unit">Output / Person-Hour</div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SUMMARY BY UNIT -->
+
+    <div class="card">
+
+      <h2>⚖️ Summary แยกตาม Unit</h2>
+
+      <div id="summaryByUnit" class="summary-grid">
+      </div>
+
+    </div>
+
+
+    <!-- OUTPUT TREND -->
+
+    <div class="card">
+
+      <h2>📈 Output Trend</h2>
+
+      <div class="chart-container">
+        <canvas id="outputChart" width="1200" height="350"></canvas>
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCTIVITY TREND -->
+
+    <div class="card">
+
+      <h2>📈 Productivity Trend</h2>
+
+      <div class="chart-container">
+        <canvas id="productivityChart" width="1200" height="350"></canvas>
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCT COMPARISON -->
+
+    <div class="card">
+
+      <h2>📊 Product Comparison</h2>
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Unit</th>
+              <th>Lots</th>
+              <th>Output</th>
+              <th>Hours</th>
+              <th>Worker Hours</th>
+              <th>Output / Hour</th>
+              <th>Output / Person</th>
+              <th>Output / Person / Hour</th>
+            </tr>
+          </thead>
+
+          <tbody id="productComparisonBody">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- DETAIL -->
+
+    <div class="card">
+
+      <h2>📋 Production Detail</h2>
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Lot</th>
+              <th>Product</th>
+              <th>Worker</th>
+              <th>Unit</th>
+              <th>Start</th>
+              <th>Finish</th>
+              <th>Hours</th>
+              <th>Output</th>
+              <th>Output / Hour</th>
+              <th>Output / Person</th>
+              <th>Output / Person / Hour</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="detailBody">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+<script>
+
+/* =========================================================
+   CONFIG
+========================================================= */
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbx_zRo05cpH_Fl488sgUCMC18U0ziSDJM_ytcSGSWsM-RYD5wqw54M0MNdpG6YvmG4Y/exec";
+
+
+/* =========================================================
+   GLOBAL DATA
+========================================================= */
+
+let dashboardData = null;
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", async function () {
+
+  setThisMonth();
+
+  await loadProducts();
+
+  await loadDashboard();
+
+});
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function showStatus(message, type) {
+
+  const box = document.getElementById("statusBox");
+
+  box.textContent = message;
+
+  box.className = "status " + type;
+
+}
+
+
+function hideStatus() {
+
+  const box = document.getElementById("statusBox");
+
+  box.className = "status";
+
+  box.textContent = "";
+
+}
+
+
+/* =========================================================
+   LOAD PRODUCTS
+========================================================= */
+
+async function loadProducts() {
+
+  try {
+
+    const response = await fetch(
+      API_URL + "?action=products"
+    );
+
+    const result = await response.json();
+
+    if (!result.success) {
+
+      throw new Error(
+        result.message || "ไม่สามารถโหลด Product ได้"
+      );
+
+    }
+
+    const select =
+      document.getElementById("productFilter");
+
+    select.innerHTML =
+      '<option value="">ทั้งหมด</option>';
+
+    result.data.forEach(function(product) {
+
+      const option =
+        document.createElement("option");
+
+      option.value = product.productId;
+
+      option.textContent =
+        product.productName;
+
+      select.appendChild(option);
+
+    });
+
+  }
+  catch (error) {
+
+    console.error(error);
+
+    showStatus(
+      "ไม่สามารถโหลด Product ได้: " + error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD DASHBOARD
+========================================================= */
+
+async function loadDashboard() {
+
+  try {
+
+    showStatus(
+      "กำลังโหลดข้อมูล Dashboard...",
+      "loading"
+    );
+
+
+    const startDate =
+      document.getElementById("startDate").value;
+
+    const endDate =
+      document.getElementById("endDate").value;
+
+    const product =
+      document.getElementById("productFilter").value;
+
+    const unit =
+      document.getElementById("unitFilter").value;
+
+    const groupBy =
+      document.getElementById("groupBy").value;
+
+
+    let url =
+      API_URL +
+      "?action=dashboard" +
+      "&startDate=" +
+      encodeURIComponent(startDate) +
+      "&endDate=" +
+      encodeURIComponent(endDate) +
+      "&product=" +
+      encodeURIComponent(product) +
+      "&unit=" +
+      encodeURIComponent(unit) +
+      "&groupBy=" +
+      encodeURIComponent(groupBy);
+
+
+    console.log("Dashboard API:", url);
+
+
+    const response =
+      await fetch(url);
+
+
+    const result =
+      await response.json();
+
+
+    console.log("Dashboard result:", result);
+
+
+    if (!result.success) {
+
+      throw new Error(
+        result.message ||
+        "ไม่สามารถโหลด Dashboard ได้"
+      );
+
+    }
+
+
+    dashboardData =
+      result.data || result;
+
+
+    renderDashboard();
+
+
+    showStatus(
+      "โหลดข้อมูล Dashboard สำเร็จ",
+      "success"
+    );
+
+
+    setTimeout(function() {
+      hideStatus();
+    }, 3000);
+
+  }
+  catch (error) {
+
+    console.error(error);
+
+    showStatus(
+      "เกิดข้อผิดพลาด: " + error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER DASHBOARD
+========================================================= */
+
+function renderDashboard() {
+
+  if (!dashboardData) {
+    return;
+  }
+
+  renderKPI();
+
+  renderSummaryByUnit();
+
+  renderOutputChart();
+
+  renderProductivityChart();
+
+  renderProductComparison();
+
+  renderDetail();
+
+}
+
+
+/* =========================================================
+   KPI
+========================================================= */
+
+function renderKPI() {
+
+  const summary =
+    dashboardData.summary || {};
+
+
+  setText(
+    "kpiLots",
+    formatNumber(
+      summary.totalLots || 0
+    )
+  );
+
+
+  setText(
+    "kpiOutput",
+    formatNumber(
+      summary.totalOutput || 0
+    )
+  );
+
+
+  setText(
+    "kpiHours",
+    formatNumber(
+      summary.totalProductionHours || 0,
+      2
+    )
+  );
+
+
+  setText(
+    "kpiWorkerHours",
+    formatNumber(
+      summary.totalWorkerHours || 0,
+      2
+    )
+  );
+
+
+  setText(
+    "kpiWorkers",
+    formatNumber(
+      summary.averageWorkers || 0,
+      2
+    )
+  );
+
+
+  setText(
+    "kpiPerHour",
+    formatNumber(
+      summary.outputPerHour || 0,
+      2
+    )
+  );
+
+
+  setText(
+    "kpiPerPersonHour",
+    formatNumber(
+      summary.outputPerPersonHour || 0,
+      2
+    )
+  );
+
+
+  const unit =
+    summary.unit || dashboardData.unit || "-";
+
+
+  setText(
+    "kpiOutputUnit",
+    unit
+  );
+
+}
+
+
+/* =========================================================
+   SUMMARY BY UNIT
+========================================================= */
+
+function renderSummaryByUnit() {
+
+  const container =
+    document.getElementById(
+      "summaryByUnit"
+    );
+
+
+  container.innerHTML = "";
+
+
+  const summaryByUnit =
+    dashboardData.summaryByUnit;
+
+
+  if (!summaryByUnit) {
+
+    container.innerHTML =
+      '<div class="empty">ไม่มีข้อมูล</div>';
+
+    return;
+
+  }
+
+
+  let units = [];
+
+
+  if (Array.isArray(summaryByUnit)) {
+
+    units = summaryByUnit;
+
+  }
+  else {
+
+    units =
+      Object.keys(summaryByUnit).map(
+        function(key) {
+
+          const item =
+            summaryByUnit[key];
+
+          return {
+            unit: key,
+            ...item
+          };
+
+        }
+      );
+
+  }
+
+
+  if (units.length === 0) {
+
+    container.innerHTML =
+      '<div class="empty">ไม่มีข้อมูล</div>';
+
+    return;
+
+  }
+
+
+  units.forEach(function(item) {
+
+    const box =
+      document.createElement("div");
+
+    box.className =
+      "summary-box";
+
+
+    const unit =
+      item.unit ||
+      item.Unit ||
+      "-";
+
+
+    box.innerHTML = `
+
+      <h3>${escapeHtml(unit)}</h3>
+
+      <div class="summary-row">
+        <span>จำนวน Lot</span>
+        <strong>
+          ${formatNumber(
+            item.totalLots || 0
+          )}
+        </strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Output</span>
+        <strong>
+          ${formatNumber(
+            item.totalOutput || 0
+          )}
+        </strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Production Hours</span>
+        <strong>
+          ${formatNumber(
+            item.totalProductionHours || 0,
+            2
+          )}
+        </strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Output / Hour</span>
+        <strong>
+          ${formatNumber(
+            item.outputPerHour || 0,
+            2
+          )}
+        </strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Output / Person / Hour</span>
+        <strong>
+          ${formatNumber(
+            item.outputPerPersonHour || 0,
+            2
+          )}
+        </strong>
+      </div>
+
+    `;
+
+
+    container.appendChild(box);
+
+  });
+
+}
+
+
+/* =========================================================
+   OUTPUT CHART
+========================================================= */
+
+function renderOutputChart() {
+
+  const canvas =
+    document.getElementById(
+      "outputChart"
+    );
+
+
+  const ctx =
+    canvas.getContext("2d");
+
+
+  clearCanvas(canvas, ctx);
+
+
+  const trend =
+    dashboardData.trend || [];
+
+
+  if (!Array.isArray(trend) ||
+      trend.length === 0) {
+
+    drawEmptyChart(
+      canvas,
+      ctx,
+      "ไม่มีข้อมูลสำหรับแสดงกราฟ"
+    );
+
+    return;
+
+  }
+
+
+  const labels =
+    trend.map(function(item) {
+
+      return item.period ||
+             item.date ||
+             item.group ||
+             "-";
+
+    });
+
+
+  const values =
+    trend.map(function(item) {
+
+      return Number(
+        item.totalOutput || 0
+      );
+
+    });
+
+
+  drawLineChart(
+    canvas,
+    ctx,
+    labels,
+    values,
+    "Output"
+  );
+
+}
+
+
+/* =========================================================
+   PRODUCTIVITY CHART
+========================================================= */
+
+function renderProductivityChart() {
+
+  const canvas =
+    document.getElementById(
+      "productivityChart"
+    );
+
+
+  const ctx =
+    canvas.getContext("2d");
+
+
+  clearCanvas(canvas, ctx);
+
+
+  const trend =
+    dashboardData.trend || [];
+
+
+  if (!Array.isArray(trend) ||
+      trend.length === 0) {
+
+    drawEmptyChart(
+      canvas,
+      ctx,
+      "ไม่มีข้อมูลสำหรับแสดงกราฟ"
+    );
+
+    return;
+
+  }
+
+
+  const labels =
+    trend.map(function(item) {
+
+      return item.period ||
+             item.date ||
+             item.group ||
+             "-";
+
+    });
+
+
+  const values =
+    trend.map(function(item) {
+
+      return Number(
+        item.outputPerHour || 0
+      );
+
+    });
+
+
+  drawLineChart(
+    canvas,
+    ctx,
+    labels,
+    values,
+    "Output / Hour"
+  );
+
+}
+
+
+/* =========================================================
+   SIMPLE LINE CHART
+========================================================= */
+
+function drawLineChart(
+  canvas,
+  ctx,
+  labels,
+  values,
+  title
+) {
+
+  const width =
+    canvas.width;
+
+  const height =
+    canvas.height;
+
+
+  const padding = 55;
+
+
+  ctx.font =
+    "14px Arial";
+
+
+  ctx.fillStyle =
+    "#334155";
+
+
+  ctx.fillText(
+    title,
+    padding,
+    25
+  );
+
+
+  const maxValue =
+    Math.max(...values, 1);
+
+
+  const chartWidth =
+    width - padding * 2;
+
+  const chartHeight =
+    height - padding * 2;
+
+
+  /* GRID */
+
+  ctx.strokeStyle =
+    "#e2e8f0";
+
+  ctx.lineWidth = 1;
+
+
+  for (let i = 0; i <= 5; i++) {
+
+    const y =
+      padding +
+      chartHeight -
+      (chartHeight / 5) * i;
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      padding,
+      y
+    );
+
+    ctx.lineTo(
+      width - padding,
+      y
+    );
+
+    ctx.stroke();
+
+
+    const value =
+      (maxValue / 5) * i;
+
+
+    ctx.fillStyle =
+      "#64748b";
+
+    ctx.font =
+      "11px Arial";
+
+
+    ctx.fillText(
+      formatNumber(value, 0),
+      5,
+      y + 4
+    );
+
+  }
+
+
+  /* LINE */
+
+  ctx.strokeStyle =
+    "#1f4e78";
+
+  ctx.lineWidth = 3;
+
+
+  ctx.beginPath();
+
+
+  values.forEach(
+    function(value, index) {
+
+      const x =
+        padding +
+        (
+          chartWidth *
+          index /
+          Math.max(values.length - 1, 1)
+        );
+
+
+      const y =
+        padding +
+        chartHeight -
+        (
+          value /
+          maxValue *
+          chartHeight
+        );
+
+
+      if (index === 0) {
+
+        ctx.moveTo(x, y);
+
+      }
+      else {
+
+        ctx.lineTo(x, y);
+
+      }
+
+    }
+  );
+
+
+  ctx.stroke();
+
+
+  /* POINTS */
+
+  ctx.fillStyle =
+    "#1f4e78";
+
+
+  values.forEach(
+    function(value, index) {
+
+      const x =
+        padding +
+        (
+          chartWidth *
+          index /
+          Math.max(values.length - 1, 1)
+        );
+
+
+      const y =
+        padding +
+        chartHeight -
+        (
+          value /
+          maxValue *
+          chartHeight
+        );
+
+
+      ctx.beginPath();
+
+      ctx.arc(
+        x,
+        y,
+        4,
+        0,
+        Math.PI * 2
+      );
+
+      ctx.fill();
+
+    }
+  );
+
+
+  /* LABELS */
+
+  ctx.fillStyle =
+    "#475569";
+
+  ctx.font =
+    "11px Arial";
+
+
+  labels.forEach(
+    function(label, index) {
+
+      const x =
+        padding +
+        (
+          chartWidth *
+          index /
+          Math.max(labels.length - 1, 1)
+        );
+
+
+      ctx.save();
+
+      ctx.translate(
+        x,
+        height - 12
+      );
+
+
+      ctx.rotate(
+        -Math.PI / 5
+      );
+
+
+      ctx.fillText(
+        String(label),
+        0,
+        0
+      );
+
+
+      ctx.restore();
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   EMPTY CHART
+========================================================= */
+
+function drawEmptyChart(
+  canvas,
+  ctx,
+  message
+) {
+
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  ctx.fillStyle =
+    "#64748b";
+
+  ctx.font =
+    "16px Arial";
+
+
+  ctx.textAlign =
+    "center";
+
+
+  ctx.fillText(
+    message,
+    canvas.width / 2,
+    canvas.height / 2
+  );
+
+
+  ctx.textAlign =
+    "left";
+
+}
+
+
+/* =========================================================
+   PRODUCT COMPARISON
+========================================================= */
+
+function renderProductComparison() {
+
+  const tbody =
+    document.getElementById(
+      "productComparisonBody"
+    );
+
+
+  tbody.innerHTML = "";
+
+
+  const data =
+    dashboardData.productComparison || [];
+
+
+  if (!Array.isArray(data) ||
+      data.length === 0) {
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" class="empty">
+          ไม่มีข้อมูล
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  data.forEach(function(item) {
+
+    const row =
+      document.createElement("tr");
+
+
+    row.innerHTML = `
+
+      <td>
+        ${escapeHtml(
+          item.productName ||
+          item.product ||
+          "-"
+        )}
+      </td>
+
+      <td>
+        ${escapeHtml(
+          item.unit || "-"
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.totalLots || 0
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.totalOutput || 0
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.totalProductionHours || 0,
+          2
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.totalWorkerHours || 0,
+          2
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.outputPerHour || 0,
+          2
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.outputPerPerson || 0,
+          2
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.outputPerPersonHour || 0,
+          2
+        )}
+      </td>
+
+    `;
+
+
+    tbody.appendChild(row);
+
+  });
+
+}
+
+
+/* =========================================================
+   DETAIL TABLE
+========================================================= */
+
+function renderDetail() {
+
+  const tbody =
+    document.getElementById(
+      "detailBody"
+    );
+
+
+  tbody.innerHTML = "";
+
+
+  const data =
+    dashboardData.details ||
+    dashboardData.detail ||
+    dashboardData.records ||
+    [];
+
+
+  if (!Array.isArray(data) ||
+      data.length === 0) {
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="11" class="empty">
+          ไม่มีข้อมูล
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  data.forEach(function(item) {
+
+    const row =
+      document.createElement("tr");
+
+
+    row.innerHTML = `
+
+      <td>
+        ${escapeHtml(
+          item.lot || "-"
+        )}
+      </td>
+
+      <td>
+        ${escapeHtml(
+          item.productName ||
+          item.product ||
+          "-"
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.workerCount || 0
+        )}
+      </td>
+
+      <td>
+        ${escapeHtml(
+          item.unit || "-"
+        )}
+      </td>
+
+      <td>
+        ${formatDateTime(
+          item.startTime
+        )}
+      </td>
+
+      <td>
+        ${formatDateTime(
+          item.finishTime
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.productionHours || 0,
+          2
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.outputQty || 0,
+          2
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.outputPerHour || 0,
+          2
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.outputPerPerson || 0,
+          2
+        )}
+      </td>
+
+      <td>
+        ${formatNumber(
+          item.outputPerPersonHour || 0,
+          2
+        )}
+      </td>
+
+    `;
+
+
+    tbody.appendChild(row);
+
+  });
+
+}
+
+
+/* =========================================================
+   QUICK DATE FILTER
+========================================================= */
+
+function setToday() {
+
+  const today =
+    new Date();
+
+
+  const date =
+    formatDateInput(today);
+
+
+  document.getElementById(
+    "startDate"
+  ).value = date;
+
+
+  document.getElementById(
+    "endDate"
+  ).value = date;
+
+
+  document.getElementById(
+    "groupBy"
+  ).value = "day";
+
+}
+
+
+function setThisWeek() {
+
+  const today =
+    new Date();
+
+
+  const day =
+    today.getDay();
+
+
+  const diff =
+    day === 0 ? 6 : day - 1;
+
+
+  const monday =
+    new Date(today);
+
+  monday.setDate(
+    today.getDate() - diff
+  );
+
+
+  document.getElementById(
+    "startDate"
+  ).value =
+    formatDateInput(monday);
+
+
+  document.getElementById(
+    "endDate"
+  ).value =
+    formatDateInput(today);
+
+
+  document.getElementById(
+    "groupBy"
+  ).value = "day";
+
+}
+
+
+function setThisMonth() {
+
+  const today =
+    new Date();
+
+
+  const firstDay =
+    new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1
+    );
+
+
+  document.getElementById(
+    "startDate"
+  ).value =
+    formatDateInput(firstDay);
+
+
+  document.getElementById(
+    "endDate"
+  ).value =
+    formatDateInput(today);
+
+
+  document.getElementById(
+    "groupBy"
+  ).value = "day";
+
+}
+
+
+function setThisYear() {
+
+  const today =
+    new Date();
+
+
+  const firstDay =
+    new Date(
+      today.getFullYear(),
+      0,
+      1
+    );
+
+
+  document.getElementById(
+    "startDate"
+  ).value =
+    formatDateInput(firstDay);
+
+
+  document.getElementById(
+    "endDate"
+  ).value =
+    formatDateInput(today);
+
+
+  document.getElementById(
+    "groupBy"
+  ).value = "month";
+
+}
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+function clearCanvas(
+  canvas,
+  ctx
+) {
+
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+}
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function setText(
+  id,
+  value
+) {
+
+  const element =
+    document.getElementById(id);
+
+  if (element) {
+
+    element.textContent =
+      value;
+
+  }
+
+}
+
+
+function formatNumber(
+  value,
+  decimals = 0
+) {
+
+  const number =
+    Number(value);
+
+
+  if (!Number.isFinite(number)) {
+    return "0";
+  }
+
+
+  return number.toLocaleString(
+    "th-TH",
+    {
+      minimumFractionDigits:
+        decimals,
+
+      maximumFractionDigits:
+        decimals
+    }
+  );
+
+}
+
+
+function formatDateInput(
+  date
+) {
+
+  const year =
+    date.getFullYear();
+
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2, "0");
+
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2, "0");
+
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
+
+}
+
+
+function formatDateTime(
+  value
+) {
+
+  if (!value) {
+    return "-";
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if (isNaN(date.getTime())) {
+
+    return String(value);
+
+  }
+
+
+  return date.toLocaleString(
+    "th-TH",
+    {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
+    }
+  );
+
+}
+
+
+function escapeHtml(
+  value
+) {
+
+  return String(value ?? "")
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+</script>
+
+</body>
+</html>
