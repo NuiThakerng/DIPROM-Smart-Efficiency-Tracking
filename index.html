@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Production Efficiency Tracker</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    .header {
+      background: #1976d2;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 25px auto;
+      padding: 0 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .start-title {
+      color: #2e7d32;
+    }
+
+    .finish-title {
+      color: #1565c0;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 13px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+    }
+
+    .btn-start {
+      background: #2e7d32;
+    }
+
+    .btn-start:hover {
+      background: #256628;
+    }
+
+    .btn-finish {
+      background: #1565c0;
+    }
+
+    .btn-finish:hover {
+      background: #0d47a1;
+    }
+
+    .status {
+      display: none;
+      padding: 14px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .status.success {
+      display: block;
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status.error {
+      display: block;
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      font-weight: bold;
+    }
+
+    .required {
+      color: red;
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .nav button {
+      margin: 0;
+      background: #607d8b;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+
+      .header h1 {
+        font-size: 20px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+  <h1>
+    PRODUCTION EFFICIENCY TRACKER
+  </h1>
+
+  <p>
+    ระบบบันทึกและติดตามประสิทธิภาพการผลิต
+  </p>
+
+</div>
+
+
+<div class="container">
+
+
+  <!-- STATUS -->
+
+  <div
+    id="statusMessage"
+    class="status"
+  ></div>
+
+
+  <!-- START PRODUCTION -->
+
+  <div class="card">
+
+    <h2 class="start-title">
+      🟢 เริ่มผลิต
+    </h2>
+
+
+    <!-- LOT -->
+
+    <label>
+      Lot <span class="required">*</span>
+    </label>
+
+    <input
+      id="startLot"
+      type="text"
+      placeholder="กรอก Lot"
+      autocomplete="off"
+    >
+
+
+    <!-- PRODUCT -->
+
+    <label>
+      สินค้า <span class="required">*</span>
+    </label>
+
+    <select id="startProduct">
+
+      <option value="">
+        -- กำลังโหลดสินค้า --
+      </option>
+
+    </select>
+
+
+    <!-- WORKER -->
+
+    <label>
+      จำนวนคน <span class="required">*</span>
+    </label>
+
+    <input
+      id="startWorker"
+      type="number"
+      min="1"
+      step="1"
+      placeholder="เช่น 5"
+    >
+
+
+    <!-- RECORDED BY -->
+
+    <label>
+      ผู้บันทึก <span class="required">*</span>
+    </label>
+
+    <input
+      id="startRecordedBy"
+      type="text"
+      placeholder="ชื่อผู้บันทึก"
+    >
+
+
+    <!-- UNIT -->
+
+    <label>
+      หน่วย <span class="required">*</span>
+    </label>
+
+    <select id="startUnit">
+
+      <option value="">
+        -- เลือกหน่วย --
+      </option>
+
+      <option value="ชิ้น/แพ็ค">
+        ชิ้น/แพ็ค
+      </option>
+
+      <option value="กิโลกรัม">
+        กิโลกรัม
+      </option>
+
+    </select>
+
+
+    <!-- BUTTON -->
+
+    <button
+      class="btn-start"
+      onclick="handleStartProduction()"
+    >
+      เริ่มผลิต
+    </button>
+
+
+  </div>
+
+
+  <!-- FINISH PRODUCTION -->
+
+  <div class="card">
+
+    <h2 class="finish-title">
+      🔵 เสร็จสิ้นการผลิต
+    </h2>
+
+
+    <!-- LOT -->
+
+    <label>
+      Lot <span class="required">*</span>
+    </label>
+
+    <input
+      id="finishLot"
+      type="text"
+      placeholder="กรอก Lot"
+      autocomplete="off"
+    >
+
+
+    <!-- OUTPUT -->
+
+    <label>
+      จำนวนผลิต <span class="required">*</span>
+    </label>
+
+    <input
+      id="finishOutput"
+      type="number"
+      min="0.01"
+      step="0.01"
+      placeholder="เช่น 450"
+    >
+
+
+    <!-- RECORDED BY -->
+
+    <label>
+      ผู้บันทึก <span class="required">*</span>
+    </label>
+
+    <input
+      id="finishRecordedBy"
+      type="text"
+      placeholder="ชื่อผู้บันทึก"
+    >
+
+
+    <!-- BUTTON -->
+
+    <button
+      class="btn-finish"
+      onclick="handleFinishProduction()"
+    >
+      เสร็จสิ้นการผลิต
+    </button>
+
+
+    <!-- RESULT -->
+
+    <div
+      id="finishResult"
+      class="result-box"
+    ></div>
+
+
+  </div>
+
+
+</div>
+
+
+<script>
+
+
+/*************************************************
+ * CONFIG
+ *************************************************/
+
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbwvEqUvp_xEz6cPgzKK622ZwAC5aGEbMGwqO1KKvQv3IGnxY_gvxrWNYit6TPoK6Nb0/exec";
+
+
+/*************************************************
+ * SHOW STATUS
+ *************************************************/
+
+function showStatus(
+  message,
+  type
+) {
+
+  const element =
+    document.getElementById(
+      "statusMessage"
+    );
+
+
+  element.textContent =
+    message;
+
+
+  element.className =
+    "status " + type;
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+}
+
+
+/*************************************************
+ * HIDE STATUS
+ *************************************************/
+
+function hideStatus() {
+
+  const element =
+    document.getElementById(
+      "statusMessage"
+    );
+
+
+  element.className =
+    "status";
+
+}
+
+
+/*************************************************
+ * LOAD ACTIVE PRODUCTS
+ *************************************************/
+
+async function loadProducts() {
+
+  try {
+
+    const response =
+      await fetch(
+        API_URL +
+        "?action=products"
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.success) {
+
+      throw new Error(
+        data.message ||
+        "ไม่สามารถโหลดสินค้าได้"
+      );
+
+    }
+
+
+    const select =
+      document.getElementById(
+        "startProduct"
+      );
+
+
+    select.innerHTML =
+      '<option value="">-- เลือกสินค้า --</option>';
+
+
+    data.products.forEach(
+      function(product) {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+
+        option.value =
+          product.productId;
+
+
+        option.textContent =
+          product.productName;
+
+
+        select.appendChild(
+          option
+        );
+
+      }
+    );
+
+
+  } catch (error) {
+
+    showStatus(
+      "ไม่สามารถโหลดรายการสินค้าได้: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/*************************************************
+ * START PRODUCTION
+ *************************************************/
+
+async function handleStartProduction() {
+
+  hideStatus();
+
+
+  const lot =
+    document.getElementById(
+      "startLot"
+    ).value.trim();
+
+
+  const product =
+    document.getElementById(
+      "startProduct"
+    ).value;
+
+
+  const workerCount =
+    document.getElementById(
+      "startWorker"
+    ).value;
+
+
+  const recordedBy =
+    document.getElementById(
+      "startRecordedBy"
+    ).value.trim();
+
+
+  const unit =
+    document.getElementById(
+      "startUnit"
+    ).value;
+
+
+  /*
+   * VALIDATION
+   */
+
+  if (!lot) {
+
+    alert(
+      "กรุณาระบุ Lot"
+    );
+
+    return;
+
+  }
+
+
+  if (!product) {
+
+    alert(
+      "กรุณาเลือกสินค้า"
+    );
+
+    return;
+
+  }
+
+
+  if (
+    !workerCount ||
+    Number(workerCount) <= 0
+  ) {
+
+    alert(
+      "กรุณาระบุจำนวนคนให้มากกว่า 0"
+    );
+
+    return;
+
+  }
+
+
+  if (!recordedBy) {
+
+    alert(
+      "กรุณาระบุชื่อผู้บันทึก"
+    );
+
+    return;
+
+  }
+
+
+  if (!unit) {
+
+    alert(
+      "กรุณาเลือกหน่วย"
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * CONFIRM
+   */
+
+  const confirmed =
+    confirm(
+      "ยืนยันการเริ่มผลิต Lot " +
+      lot +
+      " ?"
+    );
+
+
+  if (!confirmed) {
+
+    return;
+
+  }
+
+
+  /*
+   * DISABLE BUTTON
+   */
+
+  const button =
+    document.querySelector(
+      ".btn-start"
+    );
+
+
+  button.disabled =
+    true;
+
+
+  button.textContent =
+    "กำลังบันทึก...";
+
+
+  try {
+
+    const payload = {
+
+      action:
+        "startProduction",
+
+      lot:
+        lot,
+
+      product:
+        product,
+
+      workerCount:
+        Number(workerCount),
+
+      recordedBy:
+        recordedBy,
+
+      unit:
+        unit
+
+    };
+
+
+    const response =
+      await fetch(
+
+        API_URL,
+
+        {
+
+          method:
+            "POST",
+
+          headers: {
+
+            "Content-Type":
+              "text/plain;charset=utf-8"
+
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+
+        }
+
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.success) {
+
+      throw new Error(
+        data.message ||
+        "ไม่สามารถบันทึกได้"
+      );
+
+    }
+
+
+    showStatus(
+      "✓ " +
+      data.message +
+      " | Lot: " +
+      data.lot,
+      "success"
+    );
+
+
+    /*
+     * Clear form
+     */
+
+    document.getElementById(
+      "startLot"
+    ).value = "";
+
+
+    document.getElementById(
+      "startProduct"
+    ).value = "";
+
+
+    document.getElementById(
+      "startWorker"
+    ).value = "";
+
+
+    document.getElementById(
+      "startRecordedBy"
+    ).value = "";
+
+
+    document.getElementById(
+      "startUnit"
+    ).value = "";
+
+
+  } catch (error) {
+
+    showStatus(
+      "✕ " +
+      error.message,
+      "error"
+    );
+
+  }
+
+
+  button.disabled =
+    false;
+
+
+  button.textContent =
+    "เริ่มผลิต";
+
+}
+
+
+/*************************************************
+ * FINISH PRODUCTION
+ *************************************************/
+
+async function handleFinishProduction() {
+
+  hideStatus();
+
+
+  const lot =
+    document.getElementById(
+      "finishLot"
+    ).value.trim();
+
+
+  const outputQty =
+    document.getElementById(
+      "finishOutput"
+    ).value;
+
+
+  const recordedBy =
+    document.getElementById(
+      "finishRecordedBy"
+    ).value.trim();
+
+
+  /*
+   * VALIDATION
+   */
+
+  if (!lot) {
+
+    alert(
+      "กรุณาระบุ Lot"
+    );
+
+    return;
+
+  }
+
+
+  if (
+    !outputQty ||
+    Number(outputQty) <= 0
+  ) {
+
+    alert(
+      "กรุณาระบุจำนวนผลิตให้มากกว่า 0"
+    );
+
+    return;
+
+  }
+
+
+  if (!recordedBy) {
+
+    alert(
+      "กรุณาระบุชื่อผู้บันทึก"
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * CONFIRM
+   */
+
+  const confirmed =
+    confirm(
+      "ยืนยันว่า Lot " +
+      lot +
+      " ผลิตเสร็จแล้ว?"
+    );
+
+
+  if (!confirmed) {
+
+    return;
+
+  }
+
+
+  /*
+   * DISABLE BUTTON
+   */
+
+  const button =
+    document.querySelector(
+      ".btn-finish"
+    );
+
+
+  button.disabled =
+    true;
+
+
+  button.textContent =
+    "กำลังบันทึก...";
+
+
+  try {
+
+    const payload = {
+
+      action:
+        "finishProduction",
+
+      lot:
+        lot,
+
+      outputQty:
+        Number(outputQty),
+
+      recordedBy:
+        recordedBy
+
+    };
+
+
+    const response =
+      await fetch(
+
+        API_URL,
+
+        {
+
+          method:
+            "POST",
+
+          headers: {
+
+            "Content-Type":
+              "text/plain;charset=utf-8"
+
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+
+        }
+
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.success) {
+
+      throw new Error(
+        data.message ||
+        "ไม่สามารถบันทึกได้"
+      );
+
+    }
+
+
+    showStatus(
+      "✓ " +
+      data.message +
+      " | Lot: " +
+      data.lot,
+      "success"
+    );
+
+
+    /*
+     * SHOW RESULT
+     */
+
+    showFinishResult(
+      data
+    );
+
+
+    /*
+     * Clear form
+     */
+
+    document.getElementById(
+      "finishLot"
+    ).value = "";
+
+
+    document.getElementById(
+      "finishOutput"
+    ).value = "";
+
+
+    document.getElementById(
+      "finishRecordedBy"
+    ).value = "";
+
+
+  } catch (error) {
+
+    showStatus(
+      "✕ " +
+      error.message,
+      "error"
+    );
+
+  }
+
+
+  button.disabled =
+    false;
+
+
+  button.textContent =
+    "เสร็จสิ้นการผลิต";
+
+}
+
+
+/*************************************************
+ * SHOW FINISH RESULT
+ *************************************************/
+
+function showFinishResult(
+  data
+) {
+
+  const box =
+    document.getElementById(
+      "finishResult"
+    );
+
+
+  box.style.display =
+    "block";
+
+
+  box.innerHTML = `
+
+    <div class="result-row">
+      <span class="result-label">
+        Lot
+      </span>
+      <span>
+        ${data.lot}
+      </span>
+    </div>
+
+    <div class="result-row">
+      <span class="result-label">
+        จำนวนคน
+      </span>
+      <span>
+        ${data.workerCount}
+      </span>
+    </div>
+
+    <div class="result-row">
+      <span class="result-label">
+        หน่วย
+      </span>
+      <span>
+        ${data.unit}
+      </span>
+    </div>
+
+    <div class="result-row">
+      <span class="result-label">
+        จำนวนผลิต
+      </span>
+      <span>
+        ${data.outputQty}
+      </span>
+    </div>
+
+    <div class="result-row">
+      <span class="result-label">
+        ชั่วโมงผลิต
+      </span>
+      <span>
+        ${Number(
+          data.productionHours
+        ).toFixed(2)}
+      </span>
+    </div>
+
+    <div class="result-row">
+      <span class="result-label">
+        Output / Hour
+      </span>
+      <span>
+        ${Number(
+          data.outputPerHour
+        ).toFixed(2)}
+      </span>
+    </div>
+
+    <div class="result-row">
+      <span class="result-label">
+        Output / Person
+      </span>
+      <span>
+        ${Number(
+          data.outputPerPerson
+        ).toFixed(2)}
+      </span>
+    </div>
+
+    <div class="result-row">
+      <span class="result-label">
+        Output / Person / Hour
+      </span>
+      <span>
+        ${Number(
+          data.outputPerPersonHour
+        ).toFixed(2)}
+      </span>
+    </div>
+
+  `;
+
+}
+
+
+/*************************************************
+ * INITIALIZE
+ *************************************************/
+
+window.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
+    loadProducts();
+
+  }
+);
+
+
+</script>
+
+</body>
+
+</html>
